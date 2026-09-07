@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Zincir Kır</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0A0912">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zincir Kır">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0912; --bg-2:#16132A; --bg-3:#1E1A38;
+    --ink:#F5F3FF; --ink-dim:#9591B5; --ink-faint:#625E80;
+    --pink:#FF3D81; --cyan:#2DE2E6; --yellow:#FFD23F; --violet:#9B5DE5;
+    --green:#3DFFA2; --danger:#FF5A5A; --stroke:rgba(255,255,255,0.08);
+    --fd:'Teko','Arial Black',sans-serif; --fb:'Segoe UI',system-ui,sans-serif; --fp:'Press Start 2P',monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+  html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--fb);overflow:hidden;touch-action:manipulation;}
+  body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(80px);opacity:0.30;z-index:0;pointer-events:none;}
+  body::before{width:320px;height:320px;background:var(--violet);top:-120px;left:-80px;animation:f1 14s ease-in-out infinite;}
+  body::after{width:300px;height:300px;background:var(--cyan);bottom:-120px;right:-80px;animation:f2 16s ease-in-out infinite;}
+  @keyframes f1{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,60px);}}
+  @keyframes f2{0%,100%{transform:translate(0,0);}50%{transform:translate(-50px,-40px);}}
+  #app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top,14px) 14px env(safe-area-inset-bottom,14px);max-width:480px;margin:0 auto;position:relative;z-index:1;transition:transform 0.25s ease;}
+  #app.stress{animation:appshake 0.16s infinite;}
+  @keyframes appshake{0%,100%{transform:translate(0,0);}25%{transform:translate(-2px,1px);}50%{transform:translate(2px,-1px);}75%{transform:translate(-1px,-2px);}}
+
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px;gap:14px;z-index:10;background:rgba(10,9,18,0.9);backdrop-filter:blur(16px);animation:fin 0.25s ease;overflow-y:auto;}
+  @keyframes fin{from{opacity:0;transform:scale(0.98);}to{opacity:1;transform:scale(1);}}
+  .screen.hidden{display:none;}
+  .logo{font-family:var(--fd);font-weight:700;font-size:72px;margin:0;line-height:0.9;background:linear-gradient(100deg,var(--pink),var(--violet) 45%,var(--cyan));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:1px;animation:sh 5s linear infinite;}
+  @keyframes sh{to{background-position:200% 0;}}
+  .logo-sub{font-family:var(--fp);font-size:9px;letter-spacing:2px;color:var(--ink-faint);text-transform:uppercase;margin:2px 0 4px;}
+  .tagline{color:var(--ink-dim);font-size:14px;max-width:300px;line-height:1.55;margin:0;}
+  .cta{font-family:var(--fd);font-weight:600;font-size:26px;padding:10px 44px;border:none;border-radius:999px;color:#fff;cursor:pointer;letter-spacing:1px;background:linear-gradient(100deg,var(--pink),var(--violet));box-shadow:0 12px 28px -10px var(--pink);transition:transform 0.1s ease;}
+  .cta:active{transform:scale(0.96) translateY(1px);}
+  .cta.wide{width:100%;max-width:300px;}
+  .ghost{font-family:var(--fb);font-weight:700;font-size:14px;padding:11px 24px;border:1.5px solid var(--stroke);border-radius:999px;background:rgba(255,255,255,0.04);color:var(--ink-dim);cursor:pointer;transition:transform 0.1s,border-color 0.2s,color 0.2s;}
+  .ghost:active{transform:scale(0.96);}
+  .menu-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;align-items:center;}
+  .menu-row{display:flex;gap:10px;width:100%;}
+  .menu-row .ghost{flex:1;}
+  .best-pill{font-size:13px;color:var(--ink-dim);background:rgba(255,255,255,0.05);padding:7px 16px;border-radius:999px;border:1px solid var(--stroke);}
+  .best-pill b{color:var(--yellow);font-family:var(--fd);font-weight:600;font-size:20px;vertical-align:-2px;}
+
+  #topbar{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 8px;gap:12px;}
+  .stat{display:flex;flex-direction:column;}
+  .stat.right{align-items:flex-end;}
+  .stat-label{font-size:10px;letter-spacing:1.5px;color:var(--ink-faint);text-transform:uppercase;}
+  .stat-value{font-family:var(--fd);font-weight:600;font-size:32px;line-height:0.9;}
+  .stat-value.score{color:var(--yellow);}
+  .stat-value.best{color:var(--cyan);}
+  #pause-btn{width:36px;height:36px;border-radius:11px;border:1.5px solid var(--stroke);background:rgba(255,255,255,0.04);color:var(--ink-dim);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  #pause-btn:active{transform:scale(0.92);}
+
+  #time-wrap{margin-bottom:8px;}
+  #time-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;}
+  #time-num{font-family:var(--fd);font-weight:700;font-size:30px;line-height:0.9;color:var(--green);}
+  #time-num.low{color:var(--danger);animation:pulse 0.5s ease-in-out infinite;}
+  @keyframes pulse{50%{opacity:0.5;}}
+  #badge-mini{font-size:20px;letter-spacing:2px;}
+  #time-track{height:12px;border-radius:999px;background:var(--bg-3);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05);}
+  #time-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:999px;transform-origin:left;transition:transform 0.1s linear;}
+  #time-fill.low{background:linear-gradient(90deg,var(--danger),#ff8a5c);}
+  #time-fill.frozen{background:linear-gradient(90deg,#8fd3ff,#c9ecff);}
+
+  #combo-wrap{margin-bottom:14px;}
+  #combo-label{font-size:11px;color:var(--ink-dim);margin-bottom:5px;display:flex;justify-content:space-between;}
+  #combo-mult{font-family:var(--fd);font-weight:700;color:var(--yellow);font-size:15px;}
+  #combo-track{height:9px;border-radius:999px;background:var(--bg-3);overflow:hidden;}
+  #combo-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--pink),var(--violet));border-radius:999px;transform-origin:left;transition:transform 0.06s linear;}
+
+  #target-zone{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:14px;min-height:104px;justify-content:center;}
+  #target-caption{font-family:var(--fd);font-weight:600;font-size:17px;letter-spacing:0.5px;color:var(--ink-faint);min-height:22px;transition:all 0.15s ease;}
+  #target-caption.stroop{font-size:24px;font-weight:700;color:var(--ink);background:rgba(255,255,255,0.07);border:1px solid var(--stroke);border-radius:12px;padding:7px 18px;letter-spacing:0.5px;}
+  #target-swatch{width:68px;height:68px;border-radius:20px;box-shadow:0 0 0 3px rgba(255,255,255,0.08),0 12px 30px -8px currentColor;}
+  #target-word{display:none;font-family:var(--fd);font-weight:700;font-size:48px;line-height:1;letter-spacing:2px;}
+
+  #grid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:11px;min-height:0;}
+  .tile{border:none;border-radius:22px;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transform:scale(1);transition:transform 0.08s ease,filter 0.08s ease;box-shadow:0 7px 0 rgba(0,0,0,0.35),inset 0 0 40px rgba(255,255,255,0.08);background:#333;overflow:hidden;}
+  .tile:active{transform:scale(0.94) translateY(3px);box-shadow:0 3px 0 rgba(0,0,0,0.35);}
+  .tile.wrong{animation:shake 0.32s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+  .tile.correct-flash{filter:brightness(1.5);}
+  .tile .ic{font-size:40px;pointer-events:none;line-height:1;}
+  .tile.bomb{background:#241f38 !important;box-shadow:0 7px 0 rgba(0,0,0,0.5),inset 0 0 30px rgba(255,90,90,0.25);}
+  .tile.bigbomb{animation:bombpulse 0.5s ease-in-out infinite;box-shadow:0 7px 0 rgba(0,0,0,0.5),inset 0 0 34px rgba(255,60,60,0.5);}
+  @keyframes bombpulse{50%{filter:brightness(1.5);transform:scale(0.96);}}
+  .tile.gold{background:linear-gradient(135deg,#FFE24A,#FFB13F) !important;box-shadow:0 7px 0 rgba(0,0,0,0.35),0 0 26px rgba(255,210,63,0.75);animation:goldpulse 0.8s ease-in-out infinite;}
+  .tile.gold .ic{font-size:42px;}
+  @keyframes goldpulse{50%{filter:brightness(1.28);}}
+  .tile.fade{animation:tileFade 2.6s ease-in forwards;}
+  @keyframes tileFade{0%{opacity:1;}100%{opacity:0.16;}}
+  .tile.armored{filter:saturate(0.55) brightness(0.62);}
+  .tile.armored .ic{font-size:32px;opacity:0.9;}
+  .tile.cracked{filter:saturate(0.8) brightness(0.85);animation:crackpop 0.2s ease;}
+  @keyframes crackpop{0%{transform:scale(0.9);}100%{transform:scale(1);}}
+
+  #hint{text-align:center;font-size:11px;color:var(--ink-faint);padding:8px 0 2px;min-height:15px;}
+
+  /* TOAST bildirimleri: SAĞ ÜST köşeden kayarak girer, 3 sn sonra kaybolur, tıklamayı engellemez */
+  #toasts{position:fixed;top:calc(env(safe-area-inset-top,14px) + 8px);right:10px;display:flex;flex-direction:column;gap:8px;z-index:60;pointer-events:none;align-items:flex-end;max-width:82%;}
+  .toast{pointer-events:none;font-family:var(--fb);font-weight:700;font-size:13px;color:var(--ink);background:rgba(24,21,40,0.96);border:1px solid var(--stroke);border-left:4px solid var(--green);border-radius:12px;padding:9px 14px;box-shadow:0 8px 22px -8px rgba(0,0,0,0.6);transform:translateX(120%);opacity:0;transition:transform 0.32s cubic-bezier(.2,.8,.2,1),opacity 0.32s ease;max-width:100%;}
+  .toast.show{transform:translateX(0);opacity:1;}
+  .toast.badge{border-left-color:var(--yellow);}
+  .toast.chaos{border-left-color:var(--pink);}
+  .toast.freeze{border-left-color:#8fd3ff;}
+
+  .time-float{position:absolute;left:50%;top:34%;transform:translateX(-50%);font-family:var(--fd);font-weight:700;font-size:38px;color:var(--green);z-index:23;pointer-events:none;text-shadow:0 2px 10px rgba(61,255,162,0.5);animation:tfloat 1.2s ease-out forwards;}
+  @keyframes tfloat{0%{opacity:0;transform:translate(-50%,10px) scale(0.8);}20%{opacity:1;transform:translate(-50%,0) scale(1.1);}100%{opacity:0;transform:translate(-50%,-70px) scale(1);}}
+
+  #countdown{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:25;background:rgba(10,9,18,0.78);backdrop-filter:blur(6px);}
+  #countdown.on{display:flex;}
+  #cd-num{font-family:var(--fd);font-weight:700;font-size:150px;color:var(--pink);line-height:1;animation:cdpop 0.7s ease-out;}
+  #cd-num.go{color:var(--green);font-size:92px;}
+  @keyframes cdpop{0%{opacity:0;transform:scale(2.2);}30%{opacity:1;transform:scale(1);}100%{opacity:0.85;transform:scale(1);}}
+
+  #frost{position:fixed;inset:0;z-index:9;pointer-events:none;display:none;background:linear-gradient(rgba(180,230,255,0.14),rgba(180,230,255,0.05));box-shadow:inset 0 0 130px rgba(140,210,255,0.55);}
+  #frost.on{display:block;animation:frostin 0.3s ease;}
+  @keyframes frostin{from{opacity:0;}to{opacity:1;}}
+  #red-flash{position:fixed;inset:0;z-index:40;pointer-events:none;background:var(--danger);opacity:0;}
+  #red-flash.show{animation:redflash 0.4s ease;}
+  @keyframes redflash{0%{opacity:0.55;}100%{opacity:0;}}
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:46;overflow:hidden;display:none;}
+  #confetti.on{display:block;}
+  .cf{position:absolute;width:9px;height:13px;top:-16px;opacity:0.95;border-radius:2px;animation:cffall 1.3s ease-in forwards;}
+  @keyframes cffall{to{transform:translateY(112vh) rotate(720deg);opacity:0;}}
+
+  .over-title{font-family:var(--fd);font-weight:700;font-size:44px;letter-spacing:1px;margin:0;color:var(--danger);}
+  .over-title.best{color:var(--yellow);}
+  .big-score{font-family:var(--fd);font-weight:700;font-size:74px;color:var(--yellow);margin:0;line-height:0.9;}
+  .over-badges{display:flex;gap:8px;font-size:30px;min-height:34px;justify-content:center;}
+  .over-badges .none{font-size:12px;color:var(--ink-faint);font-family:var(--fb);}
+  .lb{width:100%;max-width:340px;display:flex;flex-direction:column;gap:6px;}
+  .lb-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid var(--stroke);border-radius:12px;padding:8px 12px;font-size:14px;}
+  .lb-row.me{border-color:var(--yellow);background:rgba(255,210,63,0.08);}
+  .lb-rank{font-family:var(--fd);font-weight:700;font-size:18px;color:var(--ink-dim);width:22px;flex:0 0 auto;}
+  .lb-name{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lb-badges{font-size:14px;letter-spacing:1px;}
+  .lb-score{font-family:var(--fd);font-weight:700;color:var(--yellow);font-size:18px;}
+  #name-input{width:100%;max-width:300px;background:rgba(255,255,255,0.05);border:1px solid var(--stroke);border-radius:12px;color:var(--ink);font-family:var(--fb);font-size:15px;padding:11px 14px;text-align:center;}
+  #name-input:focus{outline:none;border-color:var(--cyan);}
+
+  .panel-title{font-family:var(--fd);font-weight:600;font-size:36px;margin:0 0 4px;}
+  .panel-box{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;}
+  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,0.04);border:1px solid var(--stroke);}
+  .setting-row .label{text-align:left;}
+  .setting-row .label .t{font-size:15px;font-weight:700;}
+  .setting-row .label .d{font-size:11px;color:var(--ink-faint);margin-top:2px;}
+  .switch{position:relative;width:52px;height:30px;flex:0 0 auto;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{position:absolute;inset:0;cursor:pointer;border-radius:999px;background:var(--bg-3);transition:0.2s;border:1px solid var(--stroke);}
+  .slider::before{content:'';position:absolute;height:22px;width:22px;left:3px;top:3px;background:var(--ink-dim);border-radius:50%;transition:0.2s;}
+  .switch input:checked + .slider{background:linear-gradient(90deg,var(--green),var(--cyan));}
+  .switch input:checked + .slider::before{transform:translateX(22px);background:#fff;}
+  .seg{display:flex;gap:6px;}
+  .seg button{flex:1;padding:8px 6px;border-radius:12px;border:1.5px solid var(--stroke);background:rgba(255,255,255,0.03);color:var(--ink-dim);font-size:12px;font-weight:700;cursor:pointer;}
+  .seg button.on{border-color:var(--cyan);color:var(--cyan);background:rgba(45,226,230,0.08);}
+  .how-box{width:100%;max-width:360px;display:flex;flex-direction:column;gap:9px;text-align:left;max-height:56vh;overflow-y:auto;}
+  .how-item{display:flex;gap:11px;align-items:flex-start;background:rgba(255,255,255,0.04);border:1px solid var(--stroke);border-radius:14px;padding:11px 13px;}
+  .how-item .ic{font-size:22px;flex:0 0 auto;line-height:1.2;}
+  .how-item .tx{font-size:13px;line-height:1.45;color:var(--ink);}
+  .how-item .tx b{color:var(--cyan);}
+  .how-cat{font-family:var(--fd);font-weight:600;font-size:16px;color:var(--ink-dim);letter-spacing:1px;margin:6px 2px 0;text-transform:uppercase;}
+  .toast-mini{position:absolute;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#06231A;font-weight:800;font-size:13px;padding:10px 20px;border-radius:999px;opacity:0;transition:0.25s;z-index:50;pointer-events:none;max-width:90%;}
+  .toast-mini.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .lang-mini{position:absolute;top:calc(env(safe-area-inset-top,14px) + 4px);right:14px;display:flex;gap:6px;z-index:15;}
+  .lang-mini button{border:1.5px solid var(--stroke);background:rgba(255,255,255,0.04);color:var(--ink-dim);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;}
+  .lang-mini button.on{border-color:var(--cyan);color:var(--cyan);}
+  #lb-list{max-height:64vh;overflow-y:auto;width:100%;max-width:340px;}
+  .rank-card{margin:6px 0 2px;background:rgba(255,210,63,0.08);border:1px solid rgba(255,210,63,0.35);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--ink);text-align:center;}
+  .rank-card b{color:var(--yellow);font-family:var(--fd);font-weight:700;font-size:19px;vertical-align:-1px;}
+  #lb-list{max-height:60vh;overflow-y:auto;padding-right:2px;}
+  .lb-sticky{position:sticky;top:-2px;background:var(--bg);z-index:2;padding:2px 0 6px;}
+
+  /* AÇILIŞ (splash) ekranı */
+  #splash{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;}
+  #splash.fade{opacity:0;visibility:hidden;transition:opacity 0.5s ease,visibility 0.5s ease;}
+  .splash-inner{display:flex;flex-direction:column;align-items:center;gap:24px;animation:splashIn 0.7s cubic-bezier(.2,.8,.2,1);}
+  .splash-squares{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;}
+  .splash-squares i{width:48px;height:48px;border-radius:13px;display:block;box-shadow:0 8px 22px -8px rgba(0,0,0,0.5);animation:sqPop 0.6s ease backwards;}
+  .splash-squares i:nth-child(1){background:var(--pink);animation-delay:0.05s;}
+  .splash-squares i:nth-child(2){background:var(--cyan);animation-delay:0.15s;}
+  .splash-squares i:nth-child(3){background:var(--yellow);animation-delay:0.25s;}
+  .splash-squares i:nth-child(4){background:var(--violet);animation-delay:0.35s;}
+  @keyframes sqPop{from{opacity:0;transform:scale(0.4);}to{opacity:1;transform:scale(1);}}
+  .splash-title{font-family:var(--fd);font-weight:700;font-size:50px;letter-spacing:3px;background:linear-gradient(100deg,var(--pink),var(--violet) 45%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  @keyframes splashIn{from{opacity:0;transform:scale(0.92);}to{opacity:1;transform:scale(1);}}
+
+  /* İsim ekranı uyarısı */
+  .name-warn{font-size:12px;color:var(--danger);background:rgba(255,90,90,0.08);border:1px solid rgba(255,90,90,0.3);border-radius:10px;padding:8px 14px;max-width:300px;line-height:1.4;}
+  #firstname-input{width:100%;max-width:300px;background:rgba(255,255,255,0.05);border:1px solid var(--stroke);border-radius:12px;color:var(--ink);font-family:var(--fb);font-size:16px;padding:12px 14px;text-align:center;}
+  #firstname-input:focus{outline:none;border-color:var(--cyan);}
+
+  /* Reklamsız mağaza ekranı */
+  .shop-badge{font-size:12px;font-weight:800;color:#06231A;background:var(--green);padding:6px 16px;border-radius:999px;letter-spacing:0.3px;}
+  .shop-price{display:flex;align-items:baseline;gap:14px;justify-content:center;}
+  .shop-price .old{font-size:24px;color:var(--ink-faint);text-decoration:line-through;}
+  .shop-price .new{font-family:var(--fd);font-weight:700;font-size:58px;color:var(--yellow);line-height:1;}
+  .shop-price .new .cur{font-family:var(--fb);font-weight:700;font-size:26px;margin-left:5px;vertical-align:8px;}
+  .shop-off{font-size:13px;font-weight:800;color:var(--pink);background:rgba(255,61,129,0.12);border:1px solid rgba(255,61,129,0.4);padding:5px 12px;border-radius:999px;}
+  .shop-benefits{display:flex;flex-direction:column;gap:9px;font-size:14px;color:var(--ink);text-align:left;background:rgba(255,255,255,0.04);border:1px solid var(--stroke);border-radius:14px;padding:14px 16px;width:100%;max-width:300px;}
+  #buy-btn.owned{background:linear-gradient(100deg,var(--green),var(--cyan));box-shadow:0 12px 28px -10px var(--green);}
+  /* AdMob banner göründüğünde içerik tam banner yüksekliği kadar yukarı kaysın */
+  #app.has-banner{ padding-bottom: calc(env(safe-area-inset-bottom,14px) + var(--banner-h,60px)); }
+  #app.has-banner .screen{ bottom: var(--banner-h,60px); }
+  .combo-flash{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-family:var(--fd);font-weight:700;font-size:46px;color:var(--yellow);z-index:24;pointer-events:none;text-shadow:0 2px 12px rgba(255,210,63,0.6);animation:cflash 0.7s ease-out forwards;white-space:nowrap;}
+  @keyframes cflash{0%{opacity:0;transform:translate(-50%,10px) scale(0.7);}25%{opacity:1;transform:translate(-50%,0) scale(1.15);}100%{opacity:0;transform:translate(-50%,-42px) scale(1);}}
+  #app.shake1{animation:shake1 0.26s ease;}
+  @keyframes shake1{0%,100%{transform:translate(0,0);}20%{transform:translate(-5px,2px);}40%{transform:translate(5px,-2px);}60%{transform:translate(-4px,-2px);}80%{transform:translate(4px,2px);}}
+  #app.x2glow{box-shadow:inset 0 0 0 3px rgba(255,210,63,0.55);}
+  #app.storm{box-shadow:inset 0 0 0 3px rgba(255,61,129,0.55);}
+  #grid.sway{animation:sway 3.4s ease-in-out infinite;}
+  @keyframes sway{0%,100%{transform:rotate(-2.2deg);}50%{transform:rotate(2.2deg);}}
+  .seg button.locked{opacity:0.42;}
+  #err-banner{position:fixed;top:0;left:0;right:0;background:var(--danger);color:#fff;font-size:12px;padding:10px;z-index:999;display:none;white-space:pre-wrap;text-align:left;}
+</style>
+</head>
+<body>
+<div id="err-banner"></div>
+
+<!-- AÇILIŞ EKRANI (CHAIN BREAK) -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-squares"><i></i><i></i><i></i><i></i></div>
+    <div class="splash-title">CHAIN BREAK</div>
+  </div>
+</div>
+<div id="frost"></div>
+<div id="red-flash"></div>
+<div id="confetti"></div>
+<div id="toasts"></div>
+
+<div id="app">
+  <!-- İSİM (bir kere sorulur) -->
+  <div id="screen-name" class="screen hidden">
+    <h1 class="logo" style="font-size:48px;">CHAIN BREAK</h1>
+    <p class="tagline" data-i18n="nameAsk">Oyuncu adını gir. Skor tablosunda bu isim görünecek.</p>
+    <input id="firstname-input" type="text" maxlength="14" placeholder="Adın" autocomplete="off">
+    <div class="name-warn" data-i18n="nameWarn">⚠️ Bu isim yalnızca bir kez girilir, sonradan değiştirilemez.</div>
+    <button class="cta wide" data-act="confirm-name" data-i18n="confirmName">ONAYLA</button>
+  </div>
+
+  <!-- GİRİŞ -->
+  <div id="screen-start" class="screen">
+    <div class="lang-mini" id="lang-mini"><button data-lang="tr">TR</button><button data-lang="en">EN</button></div>
+    <h1 class="logo" data-i18n="logo">ZİNCİR KIR</h1>
+    <div class="logo-sub" data-i18n="logoSub">Renk · Refleks · Rekor</div>
+    <p class="tagline" data-i18n="tagline">Süre bitene kadar en yüksek skoru yap. Rozet kazan, süre topla, kaosa dayan.</p>
+    <div class="best-pill"><span data-i18n="yourBest">Rekorun:</span> <b id="start-best">0</b></div>
+    <div class="menu-actions">
+      <button class="cta wide" data-act="start" data-i18n="start">BAŞLA</button>
+      <button class="ghost" data-act="go-how" data-i18n="howBtn" style="width:100%;max-width:300px;">❓ Nasıl Oynanır?</button>
+      <button class="ghost" id="menu-shop-btn" data-act="go-shop" data-i18n="shopBtn" style="display:none;width:100%;max-width:300px;color:var(--green);border-color:rgba(61,255,162,0.4);">🚫 Reklamsız Al</button>
+      <div class="menu-row">
+        <button class="ghost" data-act="go-lb" data-i18n="lbBtn">🏆 Skorlar</button>
+        <button class="ghost" data-act="go-settings" data-i18n="settingsBtn">⚙ Ayarlar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REKLAMSIZ (mağaza) -->
+  <div id="screen-shop" class="screen hidden">
+    <h2 class="panel-title" data-i18n="shopTitle">Reklamsız Sürüm</h2>
+    <div class="shop-badge" data-i18n="limited">🔥 Sınırlı süre indirimi!</div>
+    <div class="shop-price">
+      <span class="old" id="shop-old">200₺</span>
+      <span class="new"><span id="shop-new">70</span><span class="cur" id="shop-cur">₺</span></span>
+    </div>
+    <div class="shop-off" id="shop-off">%65 indirim</div>
+    <div class="shop-benefits">
+      <div>✅ <span data-i18n="shopBenefit1">Tüm reklamlar tamamen kalkar</span></div>
+      <div>✅ <span data-i18n="shopBenefit2">Kesintisiz, akıcı oyun</span></div>
+      <div>✅ <span data-i18n="shopBenefit3">Geliştiriciyi desteklersin</span></div>
+    </div>
+    <button class="cta wide" id="buy-btn" data-act="buy-noads" data-i18n="buyBtn">SATIN AL</button>
+    <button class="ghost" data-act="go-start" data-i18n="back">GERİ</button>
+  </div>
+
+  <!-- NASIL OYNANIR -->
+  <div id="screen-how" class="screen hidden">
+    <h2 class="panel-title" data-i18n="howTitle">Nasıl Oynanır?</h2>
+    <div class="how-box" id="how-box"></div>
+    <button class="cta" data-act="start" data-i18n="howPlay">HADİ BAŞLA</button>
+    <button class="ghost" data-act="go-start" data-i18n="back">GERİ</button>
+  </div>
+
+  <!-- SKOR TABLOSU -->
+  <div id="screen-lb" class="screen hidden">
+    <h2 class="panel-title" data-i18n="lbTitle">🏆 En İyi 100</h2>
+    <div class="lb" id="lb-list"></div>
+    <button class="cta" data-act="go-start" data-i18n="back">GERİ</button>
+  </div>
+
+  <!-- AYARLAR -->
+  <div id="screen-settings" class="screen hidden">
+    <h2 class="panel-title" data-i18n="settingsTitle">Ayarlar</h2>
+    <div class="panel-box">
+      <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:10px;">
+        <div class="label"><div class="t" data-i18n="langTitle">Dil / Language</div><div class="d" data-i18n="langDesc">Oyun dilini değiştir</div></div>
+        <div class="seg" id="lang-seg"><button data-lang="tr">Türkçe</button><button data-lang="en">English</button></div>
+      </div>
+      <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:10px;">
+        <div class="label"><div class="t" data-i18n="modeTitle">Oyun modu</div><div class="d" data-i18n="modeDesc">Süre bitince mi, canlar bitince mi?</div></div>
+        <div class="seg" id="mode-seg"><button data-mode="time" data-i18n="modeTime" class="on">Süre</button><button data-mode="lives" data-i18n="modeLives">Can</button></div>
+      </div>
+      <div class="setting-row">
+        <div class="label"><div class="t" data-i18n="soundTitle">Ses efektleri</div><div class="d" data-i18n="soundDesc">Dokunma ve seviye sesleri</div></div>
+        <label class="switch"><input type="checkbox" id="set-sound"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div class="label"><div class="t" data-i18n="vibTitle">Titreşim</div><div class="d" data-i18n="vibDesc">Yanlışta telefon titrer</div></div>
+        <label class="switch"><input type="checkbox" id="set-vibrate"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:10px;">
+        <div class="label"><div class="t" data-i18n="themeTitle">Renk teması</div><div class="d" data-i18n="themeDesc">Oyun paletini değiştir</div></div>
+        <div class="seg" id="theme-seg" style="flex-wrap:wrap;"><button data-theme="neon" class="on">Neon</button><button data-theme="okyanus" data-i18n="themeOcean">Okyanus</button><button data-theme="gunbatimi" data-i18n="themeSunset">Günbatımı</button><button data-theme="gece" data-min="1000" data-i18n="themeNight">Gece</button><button data-theme="lav" data-min="2500" data-i18n="themeLava">Lav</button></div>
+      </div>
+    </div>
+    <button class="cta" data-act="go-start" data-i18n="back">GERİ</button>
+  </div>
+
+  <!-- DURAKLAT -->
+  <div id="screen-pause" class="screen hidden">
+    <h2 class="panel-title" data-i18n="pausedTitle">Duraklatıldı</h2>
+    <div class="menu-actions">
+      <button class="cta wide" data-act="resume" data-i18n="resume">DEVAM ET</button>
+      <button class="ghost" data-act="restart-game" data-i18n="restartBtn" style="width:100%;">🔄 Baştan Başla</button>
+      <button class="ghost" data-act="pause-menu" data-i18n="mainMenu">Ana Menü</button>
+    </div>
+  </div>
+
+  <!-- BİTİŞ -->
+  <div id="screen-over" class="screen hidden">
+    <h1 class="over-title" id="over-title">SÜRE DOLDU</h1>
+    <p class="big-score" id="over-score">0</p>
+    <div class="over-badges" id="over-badges"></div>
+    <div class="lb" id="over-lb"></div>
+    <div class="menu-actions">
+      <button class="cta wide" data-act="save-retry" data-i18n="saveRetry">KAYDET & TEKRAR</button>
+      <button class="ghost" data-act="save-menu" data-i18n="mainMenu">Ana Menü</button>
+    </div>
+  </div>
+
+  <!-- OYUN -->
+  <div id="screen-game">
+    <div id="topbar">
+      <div class="stat"><span class="stat-label" data-i18n="scoreLabel">Skor</span><span class="stat-value score" id="score">0</span></div>
+      <button id="pause-btn" data-act="pause">⏸</button>
+      <div class="stat right"><span class="stat-label" data-i18n="bestLabel">Rekor</span><span class="stat-value best" id="best">0</span></div>
+    </div>
+    <div id="time-wrap">
+      <div id="time-head"><span id="time-num">0:45</span><span id="badge-mini"></span></div>
+      <div id="time-track"><div id="time-fill"></div></div>
+    </div>
+    <div id="combo-wrap">
+      <div id="combo-label"><span><span data-i18n="chainWord">KOMBO</span> <span id="combo-mult">x1</span></span><span><span data-i18n="comboWord">zincir:</span> <span id="chain-count">0</span></span></div>
+      <div id="combo-track"><div id="combo-fill"></div></div>
+    </div>
+    <div id="target-zone">
+      <span id="target-caption" data-i18n="tapThis">BU RENGE DOKUN</span>
+      <div id="target-swatch"></div>
+      <div id="target-word">MOR</div>
+    </div>
+    <div id="grid"></div>
+    <div id="hint" data-i18n="hint">Doğru renge dokun, kombo yap.</div>
+    <div id="countdown"><div id="cd-num">3</div></div>
+  </div>
+
+  <div class="toast-mini" id="mini-toast"></div>
+</div>
+
+<script>
+"use strict";
+window.onerror=function(msg,src,line){var b=document.getElementById('err-banner');if(b){b.style.display='block';b.textContent='Hata: '+msg+' (satır '+line+')';}return false;};
+
+(function(){
+  /* ============================================================
+     A) AYARLANABİLİR DEĞERLER (zorluk buradan ayarlanır)
+     ============================================================ */
+  var START_TIME=45;       // başlangıç süresi (sn) — kısa = zor
+  var BASE=10;             // temel puan
+  var COMBO_WINDOW=1.9;    // kombo penceresi (sn) — kısa = hızlı dokun
+  var WRONG_PENALTY=4;     // yanlış renkte düşen saniye
+  var BOMB_PENALTY=6;      // bomba taşında düşen saniye
+
+  // Zorluk barajları (skor)
+  var BOMB_FROM=600;       // bomba taşları 600 puandan sonra
+  var ARMOR_FROM=900;      // zırhlı taşlar (2 tık) 900'den sonra
+  var CHAOS_FROM=1400;     // kaos modu 1400'den sonra
+  var STROOP_FROM=250;     // kelime tuzağı (Stroop) 250 puandan sonra
+  var REVERSE_FROM=500;    // "bu renge DOKUNMA" ters komutu
+  var ROTATE_FROM=1000;    // ızgara hafif sallanır
+  var GOLD_FROM=300;       // altın bonus kutu
+  var FAKE_FROM=1200;      // sahte hedef (ikiz renk)
+  var DISAPPEAR_FROM=1600; // kaybolan kutular
+  var BIGBOMB_PENALTY=8;   // sayaçlı (büyük) bomba cezası
+  var STORM_FROM=800, STORM_EVERY=700, STORM_DURATION=5;   // fırtına modu
+  var STREAK_FOR_BONUS=10, STREAK_BONUS_DUR=4;             // seri x2 bonusu
+
+  // Rozetler
+  var BADGES=[
+    {key:'bronze', emoji:'🥉', score:200},
+    {key:'silver', emoji:'🥈', score:400},
+    {key:'gold',   emoji:'🥇', score:600},
+    {key:'diamond',emoji:'💎', score:1000}
+  ];
+  function colorsForScore(s){ return s>=350?5 : s>=80?4 : 3; }   // renkler erken artar
+  function gridForScore(s){ return s>=600?6:4; }                 // 600'de 6 kutu
+
+  var THEMES={
+    // Her temada slotlar KENDİ rengini korur (pembe hep pembe, mavi hep mavi...) ki
+    // kelime tuzağındaki isimler ("PEMBE","MOR"...) her temada doğru olsun. Temalar sadece ton/canlılık değiştirir.
+    neon:{pink:'#FF3D81',cyan:'#2DE2E6',yellow:'#FFD23F',violet:'#9B5DE5',green:'#3DFFA2'},
+    okyanus:{pink:'#FF5CA8',cyan:'#26CCE6',yellow:'#FFE24A',violet:'#9B6BEA',green:'#2FE0A0'},
+    gunbatimi:{pink:'#FF4F86',cyan:'#34C9DE',yellow:'#FFC93F',violet:'#A860E6',green:'#54DD84'},
+    gece:{pink:'#FF4FA3',cyan:'#2AB8FF',yellow:'#F5E65C',violet:'#8E6BFF',green:'#2FE0B0'},
+    lav:{pink:'#FF5C93',cyan:'#37C7D6',yellow:'#FFB13F',violet:'#C15CE0',green:'#7FD94F'}
+  };
+  var colorOrder=['pink','cyan','yellow','violet','green'];
+
+  /* ============================================================
+     KÜRESEL SKOR TABLOSU (opsiyonel — herkes birbirinin skorunu görür)
+     Kapalıyken skorlar SADECE bu cihazda tutulur.
+     AÇMAK İÇİN (ücretsiz, ~2 dk):
+       1) console.firebase.google.com → yeni proje
+       2) Build → Realtime Database → Create Database → "test mode" seç
+       3) Sana verdiği URL'yi (https://....firebaseio.com) aşağıya yapıştır
+       4) enabled: true yap
+     ============================================================ */
+  var GLOBAL = {
+    enabled: true,
+    url: "https://chain-break-e113b-default-rtdb.firebaseio.com"
+  };
+
+  /* ============================================================
+     REKLAM + REKLAMSIZ SATIN ALMA (Google Play para kazanma)
+     - Reklamlar Median.co + AdMob ile gösterilir. Kurunca ADS.enabled=true yap.
+     - Reklamsız satın alma: Play Console'da 'remove_ads' ürünü + Median IAP.
+       Satın alma başarılı olunca Median, window.onRemoveAdsPurchased() çağırmalı.
+     ============================================================ */
+  var ADS = {
+    enabled: true,             // Capacitor AdMob kuruldu → açık
+    interstitialEvery: 3,      // kaç oyunda bir tam ekran (geçiş) reklamı
+    // AdMob reklam birimi kimlikleri (senin hesabından)
+    bannerId: 'ca-app-pub-7388626270515820/1050568185',
+    interstitialId: 'ca-app-pub-7388626270515820/8998330640',
+    // TEST modu: true iken Google'ın resmi test reklamları gösterilir (kesin dolar).
+    // YAYINA çıkmadan ÖNCE bunu false yap ki senin gerçek reklamların gösterilsin!
+    useTestAds: true,
+    testBannerId: 'ca-app-pub-3940256099942544/6300978111',
+    testInterstitialId: 'ca-app-pub-3940256099942544/1033173712'
+  };
+  var STORE = {
+    productId: 'remove_ads',   // Play Console'da bu kimlikle ürün oluştur
+    price: '70', oldPrice: '200', currency: '₺'
+  };
+  function isNoAds(){ try{ return window.localStorage.getItem('zk_noads')==='1'; }catch(e){ return false; } }
+  function setNoAds(){ try{ window.localStorage.setItem('zk_noads','1'); }catch(e){} }
+  var _gameCount = 0;
+
+  // Capacitor AdMob eklentisine kısa erişim (yalnızca uygulama sürümünde vardır)
+  function AdMob(){ try{ return window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.AdMob; }catch(e){ return null; } }
+  var _admobReady = false, _bannerShown = false;
+
+  // Uygulama açılınca AdMob'u başlat + banner göster
+  // Banner gerçek yüksekliğini uygula (kayma/boşluk olmadan tam oturur)
+  function applyBannerHeight(h){
+    var dpr = window.devicePixelRatio || 1;
+    var cssH = h||0;
+    if(cssH > 130) cssH = Math.round(cssH / dpr);   // gerçek piksel geldiyse dp'ye çevir
+    var app=document.getElementById('app');
+    if(cssH > 0){ document.documentElement.style.setProperty('--banner-h', cssH+'px'); if(app)app.classList.add('has-banner'); _bannerShown=true; }
+    else { if(app)app.classList.remove('has-banner'); _bannerShown=false; }
+  }
+  function initAds(){
+    var am = AdMob(); if(!ADS.enabled || !am) return;   // tarayıcıda çalışmaz, sorun değil
+    try{
+      // banner boyutu değişince oyunu tam o kadar kaydır (asıl düzeltme)
+      try{ am.addListener('bannerAdSizeChanged', function(size){ var h=(size&&size.height!=null)?size.height:0; applyBannerHeight(h); }); }catch(e){}
+      am.initialize({ initializeForTesting: true }).then(function(){
+        _admobReady = true;
+        showBanner();
+      }).catch(function(){});
+    }catch(e){}
+  }
+  // --- Reklam kancaları (uygulama dışında/köprü yoksa hiçbir şey yapmaz) ---
+  function showBanner(){
+    var am = AdMob(); if(!ADS.enabled || isNoAds() || !am || !_admobReady || _bannerShown) return;
+    try{
+      var bId = ADS.useTestAds ? ADS.testBannerId : ADS.bannerId;
+      am.showBanner({ adId: bId, position: 'BOTTOM_CENTER', margin: 0, isTesting: ADS.useTestAds }).then(function(){ _bannerShown = true; var a=document.getElementById('app'); if(a)a.classList.add('has-banner'); }).catch(function(){});
+    }catch(e){}
+  }
+  function hideBanner(){
+    var am = AdMob(); if(!am) return;
+    try{ am.hideBanner().then(function(){ _bannerShown = false; var a=document.getElementById('app'); if(a)a.classList.remove('has-banner'); }).catch(function(){}); }catch(e){}
+  }
+  function maybeInterstitial(){
+    var am = AdMob(); if(!ADS.enabled || isNoAds() || !am || !_admobReady) return;
+    _gameCount++;
+    if(_gameCount % ADS.interstitialEvery === 0){
+      try{
+        var iId = ADS.useTestAds ? ADS.testInterstitialId : ADS.interstitialId;
+        am.prepareInterstitial({ adId: iId, isTesting: ADS.useTestAds }).then(function(){
+          return am.showInterstitial();
+        }).catch(function(){});
+      }catch(e){}
+    }
+  }
+  // --- Satın alma ---
+  function buyRemoveAds(){
+    var d=L();
+    if(isNoAds()){ miniToastShow(d.alreadyOwned); return; }
+    // Gerçek satın alma (Median in-app purchase köprüsü)
+    try{
+      if(window.median && median.iap && median.iap.purchase){ median.iap.purchase({productId:STORE.productId}); return; }
+      if(window.median && median.iap && median.iap.buy){ median.iap.buy(STORE.productId); return; }
+    }catch(e){}
+    // Köprü yoksa (web/önizleme): açıkla
+    miniToastShow(d.buyAppOnly);
+  }
+  // Median satın alma başarılıysa BUNU çağırır (rehberde anlatılıyor)
+  window.onRemoveAdsPurchased = function(){ setNoAds(); applyNoAds(); try{miniToastShow(L().thanksBuy);}catch(e){} };
+
+  // Oyuncunun ülkesi (ülke sıralaması için) — birden çok servis dener, biri tutmazsa diğerine geçer
+  var myCountry = null;
+  try{ myCountry = window.localStorage.getItem('zk_country') || null; }catch(e){}
+  function detectCountry(){
+    if(myCountry) return;
+    // 1) Ağ GEREKMEYEN hızlı tahmin: tarayıcı dilinden ülke ("tr-TR" → TR)
+    try{
+      var langs = navigator.languages || [navigator.language || navigator.userLanguage || ''];
+      for(var L=0; L<langs.length; L++){ var m=/[-_]([A-Za-z]{2})(?:$|[-_])/.exec(langs[L]||''); if(m){ myCountry=m[1].toUpperCase(); break; } }
+      if(myCountry){ try{window.localStorage.setItem('zk_country',myCountry);}catch(e){} }
+    }catch(e){}
+    // 2) IP tabanlı KESIN tespit (başarılı olursa dil tahmininin üstüne yazar)
+    var sources=[
+      {url:'https://api.country.is/', pick:function(d){return d&&d.country;}},
+      {url:'https://ipapi.co/json/', pick:function(d){return d&&d.country_code;}},
+      {url:'https://ipwho.is/', pick:function(d){return d&&d.country_code;}}
+    ];
+    var i=0;
+    function tryNext(){
+      if(i>=sources.length) return;
+      var src=sources[i++];
+      try{
+        fetch(src.url).then(function(r){return r.json();}).then(function(d){
+          var cc=src.pick(d);
+          if(cc){ myCountry=String(cc).toUpperCase(); try{window.localStorage.setItem('zk_country',myCountry);}catch(e){} }
+          else tryNext();
+        }).catch(function(){ tryNext(); });
+      }catch(e){ tryNext(); }
+    }
+    tryNext();
+  }
+
+  /* ===== B) HAFIZA ===== */
+  var _mem={};
+  var Store={get:function(k){try{return window.localStorage.getItem(k);}catch(e){return (k in _mem)?_mem[k]:null;}},set:function(k,v){try{window.localStorage.setItem(k,v);}catch(e){_mem[k]=v;}}};
+
+  /* ===== KÜFÜR / ARGO İSİM KONTROLÜ (TR + EN) ===== */
+  // İsmi sadeleştir: küçük harf, Türkçe karakter + leetspeak (s@lak, 5alak vb.) çevir
+  function normName(s){
+    s=(s||'').toLowerCase();
+    s=s.replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u');
+    s=s.replace(/[0]/g,'o').replace(/[1!|]/g,'i').replace(/[3]/g,'e').replace(/[4@]/g,'a').replace(/[5$]/g,'s').replace(/[7]/g,'t').replace(/[8]/g,'b');
+    return s.replace(/[^a-z0-9]/g,'');
+  }
+  // Yasak kelime kökleri — kısa/yaygın olanlar (mal, top, çok, dik...) ELENDİ ki gerçek isimler engellenmesin
+  var BAD_WORDS = [
+    // Türkçe (net küfürler)
+    'orospu','orospi','oruspu','siktir','sikeyim','sikerim','sikim','sikik','yarrak','yarak','amcik','amck','amina','aminakoyayim','anasikeyim','ananisik','pezevenk','pezvenk','gavat','kahpe','kaltak','gotveren','gotveren','ibne','ipne','pust','pezeveng','dalyarak','dalyarrak','sokayim','sokarim','amina','amcik','sürtük','surtuk','fahise','fahişe','orospucocugu','anaskeyim','siktir','salak','aptal','gerizekali','beyinsiz','yavsak','yavşak','godoş','godos',
+    // İngilizce (net küfür/hakaret)
+    'fuck','fuk','fck','fucker','motherfuck','shit','bitch','asshole','ashole','dick','pussy','pusy','cunt','bastard','whore','slut','nigger','nigga','faggot','fagot','cock','wanker','dildo','porn','rape','rapist','pedo','pedophile'
+  ];
+  function isBadName(name){
+    var n=normName(name);
+    if(!n) return false;
+    for(var i=0;i<BAD_WORDS.length;i++){ if(n.indexOf(BAD_WORDS[i])>=0) return true; }
+    return false;
+  }
+
+  /* ===== YENİ ÖZELLİK YARDIMCILARI ===== */
+  var _musicTimer=null,_musicStep=0; var _MUSIC=[262,330,392,523,392,330];
+  function tone(freq,dur,vol,type){ if(!settings.sound)return; try{ if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)(); var o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type=type||'sine'; o.frequency.value=freq; g.gain.setValueAtTime(vol||0.05,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+(dur||0.2)); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+(dur||0.2)); }catch(e){} }
+  function startMusic(){ if(!settings.sound)return; stopMusic(); _musicStep=0; _musicTimer=setInterval(function(){ try{ tone(_MUSIC[_musicStep%_MUSIC.length],0.16,0.03,'triangle'); }catch(e){} _musicStep++; },430); }
+  function stopMusic(){ if(_musicTimer){clearInterval(_musicTimer);_musicTimer=null;} }
+  function effMult(){ var m=1,now=Date.now(); if(now<x2Until)m*=2; if(now<stormUntil)m*=3; return m; }
+  function comboFlash(txt){ try{ var el=document.createElement('div'); el.className='combo-flash'; el.textContent=txt; $('screen-game').appendChild(el); setTimeout(function(){ if(el.parentNode)el.parentNode.removeChild(el); },700);}catch(e){} }
+  function screenShake(){ try{ app.classList.add('shake1'); setTimeout(function(){app.classList.remove('shake1');},260);}catch(e){} }
+  function updateLivesUI(){ try{ if(livesMode){ var h=''; for(var i=0;i<3;i++)h+=(i<lives?'❤':'🖤'); $('time-num').textContent=h; $('time-num').classList.remove('low'); $('time-track').style.display='none'; } else { $('time-track').style.display=''; } }catch(e){} }
+  function checkDaily(){ try{ var today=new Date().toDateString(); if(Store.get('zk_lastDaily')!==today){ Store.set('zk_lastDaily',today); Store.set('zk_dailyBonus','5'); return true; } }catch(e){} return false; }
+  function checkStorm(){
+    if(score>=STORM_FROM && score>=lastStormScore+STORM_EVERY && Date.now()>=stormUntil){
+      lastStormScore=score; stormUntil=Date.now()+STORM_DURATION*1000;
+      app.classList.add('storm'); setTimeout(function(){ if(Date.now()>=stormUntil) app.classList.remove('storm'); }, STORM_DURATION*1000+60);
+      toast(L().tStorm,'chaos'); beep(300,0.3,'sawtooth'); vibrate(60);
+    }
+  }
+  // hedefe yakın ama hafif farklı ton (sahte ikiz için)
+  function shadeShift(hex, amt){ try{ var n=parseInt(hex.slice(1),16); var r=(n>>16)&255,g=(n>>8)&255,b=n&255; r=Math.max(0,Math.min(255,r+amt)); g=Math.max(0,Math.min(255,g-amt)); b=Math.max(0,Math.min(255,b+Math.round(amt/2))); return 'rgb('+r+','+g+','+b+')'; }catch(e){ return hex; } }
+  // altın kutu: bonus puan + süre, kombo bozulmaz
+  function goldenHit(tile){
+    tile.classList.add('correct-flash'); setTimeout(function(){tile.classList.remove('correct-flash');},110);
+    score+=50; if(!livesMode) timeLeft+=3;
+    $('score').textContent=score; timeFloat('⭐ +50');
+    beep(900,0.10,'triangle'); beep(1250,0.10,'triangle'); confetti();
+    nextChallenge();
+  }
+
+  /* ===== C) ÇEVİRİLER ===== */
+  var T={
+    tr:{
+      logo:'ZİNCİR KIR', logoSub:'Renk · Refleks · Rekor',
+      tagline:'Süre bitene kadar en yüksek skoru yap. Rozet kazan, süre topla, kaosa dayan.',
+      yourBest:'Rekorun:', start:'BAŞLA', settingsBtn:'⚙ Ayarlar', howBtn:'❓ Nasıl Oynanır?', lbBtn:'🏆 Skorlar',
+      howTitle:'Nasıl Oynanır?', howPlay:'HADİ BAŞLA', back:'GERİ',
+      lbTitle:'🏆 En İyi 100', resetLb:'Tabloyu sıfırla',
+      worldRank:'Dünya sıralaman', countryRank:'Ülke sıralaman', deviceRank:'Bu cihazdaki sıran',
+      settingsTitle:'Ayarlar', langTitle:'Dil / Language', langDesc:'Oyun dilini değiştir',
+      soundTitle:'Ses efektleri', soundDesc:'Dokunma ve seviye sesleri',
+      vibTitle:'Titreşim', vibDesc:'Yanlışta telefon titrer',
+      themeTitle:'Renk teması', themeDesc:'Oyun paletini değiştir', themeOcean:'Okyanus', themeSunset:'Günbatımı',
+      resetBest:'Rekoru sıfırla',
+      pausedTitle:'Duraklatıldı', resume:'DEVAM ET', mainMenu:'Ana Menü', saveRetry:'KAYDET & TEKRAR', restartBtn:'🔄 Baştan Başla', loading:'Yükleniyor…',
+      scoreLabel:'Skor', bestLabel:'Rekor', chainWord:'KOMBO', comboWord:'zincir:',
+      tapThis:'BU RENGE DOKUN', hint:'Doğru renge dokun, kombo yap.',
+      findNamed:'📖 YAZAN RENGE DOKUN', findInk:'🎨 YAZININ RENGİNE DOKUN',
+      avoidThis:'❌ BU RENGE DOKUNMA!',
+      tStorm:'🌩️ FIRTINA! 3x puan', livesUp:'CANLARIN BİTTİ',
+      modeTitle:'Oyun modu', modeDesc:'Süre bitince mi, canlar bitince mi?', modeTime:'Süre', modeLives:'Can',
+      themeNight:'Gece', themeLava:'Lav', themeLocked:'🔒 Bu tema {n} puanda açılır',
+      dailyReward:'🎁 Günlük ödül: sonraki oyunda +5 saniye!',
+      cName:{pink:'PEMBE',cyan:'MAVİ',yellow:'SARI',violet:'MOR',green:'YEŞİL'},
+      go:'BAŞLA!', timeUp:'SÜRE DOLDU', newBest:'YENİ REKOR!',
+      secBonus:function(n){return '+'+n+' sn';},
+      tBronze:'🥉 Bronz Çaylak — +5 saniye!', tSilver:'🥈 Gümüş Taktikçi — Zaman donduruldu!',
+      tGold:'🥇 Altın Usta — 6 kutu, %10 puan, +15 sn!', tDiamond:'💎 Elmas Efsane — +10 sn, Kombo 2x, ilk hata affı!',
+      tGrid6:'🔥 6 kutuya geçildi!', tChaos:'🌀 KAOS MODU! +20 sn, hız arttı!',
+      tForgive:'🛡️ Hata affedildi!',
+      emptyLb:'Henüz skor yok. İlk sırayı sen kap! 🏆',
+      lbReset:'Skor tablosu sıfırlandı', bestReset:'Rekor sıfırlandı',
+      namePlaceholder:'Adın', defaultName:'Sen',
+      nameAsk:'Oyuncu adını gir. Skor tablosunda bu isim görünecek.',
+      nameWarn:'⚠️ Bu isim yalnızca bir kez girilir, sonradan değiştirilemez.',
+      confirmName:'ONAYLA', nameEmpty:'Lütfen bir isim gir.', nameBad:'Uygun olmayan bir isim. Lütfen başka bir isim seç.',
+      shopBtn:'🚫 Reklamsız Al', shopTitle:'Reklamsız Sürüm', limited:'🔥 Sınırlı süre indirimi!',
+      shopBenefit1:'Tüm reklamlar tamamen kalkar', shopBenefit2:'Kesintisiz, akıcı oyun', shopBenefit3:'Geliştiriciyi desteklersin',
+      buyBtn:'SATIN AL', owned:'Satın alındı ✓', alreadyOwned:'Zaten satın aldın, teşekkürler!',
+      buyAppOnly:'Satın alma yalnızca uygulama sürümünde çalışır.', thanksBuy:'Teşekkürler! Reklamlar kapatıldı.',
+      badgeName:{bronze:'Bronz Çaylak',silver:'Gümüş Taktikçi',gold:'Altın Usta',diamond:'Elmas Efsane'},
+      howList:[
+        {cat:'TEMEL'},
+        {ic:'⏱️', tx:'<b>45 saniyeyle</b> başlarsın. Süre bitince oyun biter — amaç en yüksek skor.'},
+        {ic:'🎯', tx:'Üstteki <b>hedef renge</b> uyan kutuya dokun. Doğru dokunuş puan + kombo verir.'},
+        {ic:'⛓️', tx:'<b>Kombo:</b> Hızlı peş peşe dokun, çarpan büyür (x2, x3, x4). Yavaşlarsan kombo düşer.'},
+        {ic:'⚡', tx:'Skorun arttıkça <b>zaman hızlanır</b> AMA <b>her 500 puanda +10 sn</b> kazanırsın — iyi oynarsan sürüp gider!'},
+        {cat:'TUZAKLAR (dikkat!)'},
+        {ic:'🔤', tx:'<b>Kelime tuzağı (250+):</b> "SARI" yazar ama rengi MOR olabilir! <b>📖 = yazan renge dokun</b>, <b>🎨 = yazının rengine dokun</b>.'},
+        {ic:'❌', tx:'<b>Ters komut (500+):</b> "BU RENGE DOKUNMA!" çıkarsa, gösterilen renk <b>HARİÇ</b> herhangi bir kutuya dokun.'},
+        {ic:'💣', tx:'<b>Bomba (600+):</b> Basarsan <b>-6 sn</b>. Kaosta <b>⏱️ sayaçlı bomba</b> çıkar — ona basmak <b>-8 sn</b>.'},
+        {ic:'🛡️', tx:'<b>Zırhlı taş (900+):</b> Kırmak için <b>2 kez</b> dokun.'},
+        {ic:'👯', tx:'<b>Sahte hedef (1200+):</b> Hedefe çok benzeyen sahte bir kutu çıkar — yanlışa basma, iyi bak!'},
+        {ic:'🌀', tx:'<b>Kaos (1400+):</b> Zaman iyice hızlanır, ızgara karışır (her binlikte +20 sn).'},
+        {ic:'👻', tx:'<b>Kaybolan kutular (1600+):</b> Kutular yavaşça saydamlaşır — hızlı bul!'},
+        {ic:'🔄', tx:'<b>Dönen ızgara (1000+):</b> Izgara hafifçe sallanır, hedefi takip et.'},
+        {cat:'ROZETLER (güç verir)'},
+        {ic:'🥉', tx:'<b>Bronz</b> (200): Anında <b>+5 sn</b>.'},
+        {ic:'🥈', tx:'<b>Gümüş</b> (400): <b>Zaman 3 sn donar</b>.'},
+        {ic:'🥇', tx:'<b>Altın</b> (600): <b>6 kutu + %10 puan + 15 sn</b>.'},
+        {ic:'💎', tx:'<b>Elmas</b> (1000): Kombo süresi <b>2 katı</b> + <b>ilk hata affı</b>.'},
+        {cat:'BONUSLAR'},
+        {ic:'⭐', tx:'<b>Altın kutu:</b> Ara sıra çıkar — yakala, <b>+50 puan & +3 sn</b> (komboyu bozmaz).'},
+        {ic:'🔥', tx:'<b>Seri bonusu:</b> 10 doğru üst üste → birkaç saniye <b>her şey x2</b>.'},
+        {ic:'🌩️', tx:'<b>Fırtına (800+):</b> Kısa süre <b>3x puan</b> — hızlı vur!'},
+        {ic:'🎁', tx:'<b>Günlük ödül:</b> Her gün girene <b>+5 sn</b>.'},
+        {ic:'🎨', tx:'<b>Yeni temalar:</b> 1000 ve 2500 puanda yeni renk temaları açılır.'},
+        {cat:'MODLAR & SKOR'},
+        {ic:'❤️', tx:'<b>Can modu:</b> Ayarlar\'dan seç — süre yerine <b>3 can</b>, yanlışta 1 can gider.'},
+        {ic:'🌍', tx:'<b>Küresel skor:</b> Skorun dünyada ve kendi ülkende sıralanır!'}
+      ]
+    },
+    en:{
+      logo:'CHAIN BREAK', logoSub:'Color · Reflex · Record',
+      tagline:'Score as high as you can before time runs out. Earn badges, gain time, survive the chaos.',
+      yourBest:'Your best:', start:'START', settingsBtn:'⚙ Settings', howBtn:'❓ How to Play', lbBtn:'🏆 Scores',
+      howTitle:'How to Play', howPlay:"LET'S GO", back:'BACK',
+      lbTitle:'🏆 Top 100', resetLb:'Reset board',
+      worldRank:'World rank', countryRank:'Country rank', deviceRank:'Rank on this device',
+      settingsTitle:'Settings', langTitle:'Dil / Language', langDesc:'Change the game language',
+      soundTitle:'Sound effects', soundDesc:'Tap and level-up sounds',
+      vibTitle:'Vibration', vibDesc:'Phone vibrates on a miss',
+      themeTitle:'Color theme', themeDesc:'Change the game palette', themeOcean:'Ocean', themeSunset:'Sunset',
+      resetBest:'Reset best',
+      pausedTitle:'Paused', resume:'RESUME', mainMenu:'Main Menu', saveRetry:'SAVE & RETRY', restartBtn:'🔄 Restart', loading:'Loading…',
+      scoreLabel:'Score', bestLabel:'Best', chainWord:'COMBO', comboWord:'chain:',
+      tapThis:'TAP THIS COLOR', hint:'Tap the right color, build a combo.',
+      findNamed:'📖 TAP THE NAMED COLOR', findInk:'🎨 TAP THE INK COLOR',
+      avoidThis:'❌ DO NOT TAP THIS COLOR!',
+      tStorm:'🌩️ STORM! 3x points', livesUp:'OUT OF LIVES',
+      modeTitle:'Game mode', modeDesc:'End on time-out or on losing lives?', modeTime:'Time', modeLives:'Lives',
+      themeNight:'Night', themeLava:'Lava', themeLocked:'🔒 Unlocks at {n} points',
+      dailyReward:'🎁 Daily reward: +5 seconds next game!',
+      cName:{pink:'PINK',cyan:'CYAN',yellow:'YELLOW',violet:'PURPLE',green:'GREEN'},
+      go:'GO!', timeUp:"TIME'S UP", newBest:'NEW RECORD!',
+      secBonus:function(n){return '+'+n+'s';},
+      tBronze:'🥉 Bronze Rookie — +5 seconds!', tSilver:'🥈 Silver Tactician — Time frozen!',
+      tGold:'🥇 Gold Master — 6 boxes, +10% score, +15s!', tDiamond:'💎 Diamond Legend — +10s, Combo 2x, first mistake forgiven!',
+      tGrid6:'🔥 Grid expanded to 6!', tChaos:'🌀 CHAOS MODE! +20s, faster now!',
+      tForgive:'🛡️ Mistake forgiven!',
+      emptyLb:'No scores yet. Grab the top spot! 🏆',
+      lbReset:'Leaderboard reset', bestReset:'Best reset',
+      namePlaceholder:'Your name', defaultName:'You',
+      nameAsk:'Enter your player name. It will appear on the leaderboard.',
+      nameWarn:'⚠️ This name is set only once and cannot be changed later.',
+      confirmName:'CONFIRM', nameEmpty:'Please enter a name.', nameBad:'Inappropriate name. Please choose another one.',
+      shopBtn:'🚫 Remove Ads', shopTitle:'Ad-Free Version', limited:'🔥 Limited-time discount!',
+      shopBenefit1:'Removes all ads completely', shopBenefit2:'Uninterrupted, smooth play', shopBenefit3:'Support the developer',
+      buyBtn:'BUY', owned:'Purchased ✓', alreadyOwned:'You already own this, thanks!',
+      buyAppOnly:'Purchases work only in the app version.', thanksBuy:'Thanks! Ads removed.',
+      badgeName:{bronze:'Bronze Rookie',silver:'Silver Tactician',gold:'Gold Master',diamond:'Diamond Legend'},
+      howList:[
+        {cat:'BASICS'},
+        {ic:'⏱️', tx:'You start with <b>45 seconds</b>. Game ends at 0 — goal is the highest score.'},
+        {ic:'🎯', tx:'Tap the box matching the <b>target color</b>. Correct taps give points + combo.'},
+        {ic:'⛓️', tx:'<b>Combo:</b> Fast consecutive taps grow the multiplier (x2, x3, x4).'},
+        {ic:'⚡', tx:'As your score grows <b>time drains faster</b> BUT you gain <b>+10s every 500 points</b> — keep it going!'},
+        {cat:'TRAPS (watch out!)'},
+        {ic:'🔤', tx:'<b>Word trap (250+):</b> it says "YELLOW" but may be PURPLE! <b>📖 = tap the named color</b>, <b>🎨 = tap the ink color</b>.'},
+        {ic:'❌', tx:'<b>Reverse (500+):</b> if it says "DO NOT TAP THIS COLOR!", tap any box <b>EXCEPT</b> that color.'},
+        {ic:'💣', tx:'<b>Bomb (600+):</b> Tapping = <b>-6s</b>. In chaos a <b>⏱️ big bomb</b> appears — tapping it = <b>-8s</b>.'},
+        {ic:'🛡️', tx:'<b>Armored (900+):</b> Tap <b>twice</b> to break.'},
+        {ic:'👯', tx:'<b>Fake target (1200+):</b> a decoy box that looks almost like the target — look closely!'},
+        {ic:'🌀', tx:'<b>Chaos (1400+):</b> time speeds up, grid shuffles (+20s each 1000).'},
+        {ic:'👻', tx:'<b>Vanishing tiles (1600+):</b> boxes slowly fade — find it fast!'},
+        {ic:'🔄', tx:'<b>Rotating grid (1000+):</b> the grid sways gently.'},
+        {cat:'BADGES (give powers)'},
+        {ic:'🥉', tx:'<b>Bronze</b> (200): Instant <b>+5s</b>.'},
+        {ic:'🥈', tx:'<b>Silver</b> (400): <b>Time freezes 3s</b>.'},
+        {ic:'🥇', tx:'<b>Gold</b> (600): <b>6 boxes + 10% score + 15s</b>.'},
+        {ic:'💎', tx:'<b>Diamond</b> (1000): Combo window <b>doubled</b> + <b>first mistake forgiven</b>.'},
+        {cat:'BONUSES'},
+        {ic:'⭐', tx:'<b>Golden box:</b> grab it for <b>+50 points & +3s</b> (keeps your combo).'},
+        {ic:'🔥', tx:'<b>Streak bonus:</b> 10 correct in a row → a few seconds of <b>everything x2</b>.'},
+        {ic:'🌩️', tx:'<b>Storm (800+):</b> brief <b>3x points</b> — tap fast!'},
+        {ic:'🎁', tx:'<b>Daily reward:</b> <b>+5s</b> every day.'},
+        {ic:'🎨', tx:'<b>New themes:</b> unlock at 1000 and 2500 points.'},
+        {cat:'MODES & SCORE'},
+        {ic:'❤️', tx:'<b>Lives mode:</b> pick it in Settings — <b>3 lives</b> instead of time.'},
+        {ic:'🌍', tx:'<b>Global scores:</b> compete on the world and your country leaderboard!'}
+      ]
+    }
+  };
+
+  var defaults={sound:true,vibrate:true,theme:'neon',lang:'tr'};
+  var settings=defaults;
+  try{settings=Object.assign({},defaults,JSON.parse(Store.get('zk_settings')||'{}'));}catch(e){settings=Object.assign({},defaults);}
+  function saveSettings(){Store.set('zk_settings',JSON.stringify(settings));}
+  function L(){return T[settings.lang]||T.tr;}
+
+  /* ===== D) TEMA + SES ===== */
+  var COLORS={};
+  function applyTheme(name){var th=THEMES[name]||THEMES.neon;var r=document.documentElement;for(var k in th){r.style.setProperty('--'+k,th[k]);}COLORS={};for(var k2 in th){COLORS[k2]=th[k2];}}
+  var audioCtx=null;
+  function beep(freq,dur,type){if(!settings.sound)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(0.12,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+(dur||0.12));o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+(dur||0.12));}catch(e){}}
+  function vibrate(ms){try{if(settings.vibrate&&navigator.vibrate)navigator.vibrate(ms);}catch(e){}}
+
+  /* ===== E) EKRAN YÖNETİMİ ===== */
+  var $=function(id){return document.getElementById(id);};
+  var app=$('app');
+  var screens={name:$('screen-name'),start:$('screen-start'),shop:$('screen-shop'),how:$('screen-how'),lb:$('screen-lb'),settings:$('screen-settings'),pause:$('screen-pause'),over:$('screen-over'),game:$('screen-game')};
+  function show(name){for(var k in screens){if(k==='game'){screens.game.style.display=(name==='game')?'flex':'none';}else{if(k===name)screens[k].classList.remove('hidden');else screens[k].classList.add('hidden');}}}
+  screens.game.style.display='none';screens.game.style.flexDirection='column';screens.game.style.flex='1';
+  var miniToast=$('mini-toast');
+  function miniToastShow(t){miniToast.textContent=t;miniToast.classList.add('show');setTimeout(function(){miniToast.classList.remove('show');},1500);}
+
+  // Reklamsız mağaza ekranını hazırla (fiyat + indirim + sahiplik durumu)
+  function renderShop(){
+    var d=L();
+    $('shop-old').textContent=STORE.oldPrice+STORE.currency;
+    $('shop-new').textContent=STORE.price;
+    var cur=$('shop-cur'); if(cur) cur.textContent=STORE.currency;
+    var off=Math.round((1 - (parseFloat(STORE.price)/parseFloat(STORE.oldPrice)))*100);
+    $('shop-off').textContent=(settings.lang==='tr')?('%'+off+' indirim'):(off+'% off');
+    var btn=$('buy-btn');
+    if(isNoAds()){ btn.textContent=d.owned; btn.classList.add('owned'); }
+    else { btn.textContent=d.buyBtn; btn.classList.remove('owned'); }
+  }
+  // Satın alma durumunu uygula: reklamları kapat, menü butonunu gizle, mağazayı güncelle
+  function applyNoAds(){
+    if(isNoAds()){
+      hideBanner();
+      var mb=$('menu-shop-btn'); if(mb) mb.style.display='none';
+    }
+    renderShop();
+  }
+
+  /* ===== TOAST: sağ üstten kayarak girer, 3 sn sonra kaybolur, tıklamayı engellemez ===== */
+  function toast(text, kind){
+    var el=document.createElement('div');
+    el.className='toast '+(kind||'');
+    el.innerHTML=text;
+    $('toasts').appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('show'); });   // slide-in
+    setTimeout(function(){ el.classList.remove('show'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 350); }, 3000); // fade-out + sil
+  }
+
+  /* ===== F) DİL + AYAR ARAYÜZÜ ===== */
+  function renderHow(){var d=L();var box=$('how-box');if(!box)return;var arr=d.howList||[];var html='';for(var i=0;i<arr.length;i++){var it=arr[i];if(it.cat){html+='<div class="how-cat">'+it.cat+'</div>';}else{html+='<div class="how-item"><span class="ic">'+it.ic+'</span><span class="tx">'+it.tx+'</span></div>';}}box.innerHTML=html;}
+  function applyLang(){
+    var d=L();var els=document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<els.length;i++){var key=els[i].getAttribute('data-i18n');if(d[key]!==undefined&&typeof d[key]==='string')els[i].textContent=d[key];}
+    var lb=document.querySelectorAll('[data-lang]');
+    for(var j=0;j<lb.length;j++){if(lb[j].getAttribute('data-lang')===settings.lang)lb[j].classList.add('on');else lb[j].classList.remove('on');}
+    $('firstname-input').setAttribute('placeholder',d.namePlaceholder);
+    document.documentElement.setAttribute('lang',settings.lang);
+    renderHow();
+  }
+  function syncSettingsUI(){
+    $('set-sound').checked=!!settings.sound;$('set-vibrate').checked=!!settings.vibrate;
+    var segs=document.querySelectorAll('#theme-seg button');
+    for(var i=0;i<segs.length;i++){
+      var b=segs[i], min=parseInt(b.getAttribute('data-min')||'0',10), locked=(min>0&&best<min);
+      b.classList.toggle('locked', locked);
+      if(b.getAttribute('data-theme')===settings.theme && !locked)b.classList.add('on'); else b.classList.remove('on');
+    }
+    var mode=(Store.get('zk_mode')==='lives')?'lives':'time';
+    var ms=document.querySelectorAll('#mode-seg button');
+    for(var j=0;j<ms.length;j++){ if(ms[j].getAttribute('data-mode')===mode)ms[j].classList.add('on'); else ms[j].classList.remove('on'); }
+  }
+  function setLang(lang){if(!T[lang])return;settings.lang=lang;saveSettings();applyLang();syncSettingsUI();beep(600,0.08);}
+
+  /* ===== G) SKOR TABLOSU (yerel + opsiyonel küresel) ===== */
+  function getLB(){try{return JSON.parse(Store.get('zk_leaderboard')||'[]');}catch(e){return [];}}
+  function saveLB(a){Store.set('zk_leaderboard',JSON.stringify(a));}
+  function badgeEmojis(keys){var s='';for(var i=0;i<keys.length;i++){for(var b=0;b<BADGES.length;b++){if(BADGES[b].key===keys[i])s+=BADGES[b].emoji;}}return s;}
+
+  // sayıyı binlik ayraçla yaz (1.000.000)
+  function fmtN(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  // ülke kodundan bayrak emojisi (TR → 🇹🇷)
+  function flag(cc){ if(!cc||cc.length!==2) return '🌍'; try{ return String.fromCodePoint.apply(null,[cc.charCodeAt(0)+127397, cc.charCodeAt(1)+127397]); }catch(e){ return '🌍'; } }
+
+  // sadece satırları çiz
+  function renderRows(el, items, hi, limit){
+    var d=L();
+    var top=items.slice().sort(function(a,b){return b.score-a.score;}).slice(0, limit||100);
+    if(!top.length){ el.innerHTML='<div class="how-item" style="justify-content:center;"><span class="tx">'+d.emptyLb+'</span></div>'; return; }
+    var html='';
+    for(var i=0;i<top.length;i++){var it=top[i];
+      var me=(hi && String(it.name)===String(hi.name) && it.score===hi.score)?' me':'';
+      var fl = it.country ? '<span style="margin-right:4px;">'+flag(it.country)+'</span>' : '';
+      html+='<div class="lb-row'+me+'"><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+fl+String(it.name||d.defaultName).replace(/</g,'&lt;')+'</span><span class="lb-badges">'+badgeEmojis(it.badges||[])+'</span><span class="lb-score">'+fmtN(it.score)+'</span></div>';}
+    el.innerHTML=html;
+  }
+  // "senin sıran" kartı: dünya + (biliniyorsa) ülke sıralaması
+  function rankCardHtml(all, myScore, isGlobal){
+    var d=L();
+    var g=1; for(var i=0;i<all.length;i++){ if(all[i].score>myScore) g++; }
+    var html='<div class="rank-card">'+(isGlobal?'🌍 '+d.worldRank:'📱 '+d.deviceRank)+': <b>'+fmtN(g)+'</b> / '+fmtN(all.length)+'</div>';
+    if(isGlobal && myCountry){
+      var cc=[]; for(var j=0;j<all.length;j++){ if(all[j].country===myCountry) cc.push(all[j]); }
+      var cr=1; for(var k=0;k<cc.length;k++){ if(cc[k].score>myScore) cr++; }
+      var ctot=Math.max(cc.length,1);   // en az kendini say → "1/0" yerine "1/1"
+      html+='<div class="rank-card">'+flag(myCountry)+' '+d.countryRank+' ('+myCountry+'): <b>'+fmtN(cr)+'</b> / '+fmtN(ctot)+'</div>';
+    }
+    return html;
+  }
+  function renderWithRank(el, all, hi, limit, isGlobal){
+    var myScore = hi ? hi.score : best;
+    el.innerHTML = '<div class="lb-sticky">'+rankCardHtml(all, myScore, isGlobal)+'</div><div id="__rows"></div>';
+    renderRows(el.querySelector('#__rows'), all, hi, limit);
+  }
+
+  // --- KÜRESEL: skor gönder / hepsini çek (Firebase Realtime DB, REST) ---
+  // Her cihaza kalıcı benzersiz kimlik (aynı oyuncu = tek satır)
+  function getUid(){
+    var u=null; try{ u=window.localStorage.getItem('zk_uid'); }catch(e){}
+    if(!u){ u='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); try{ window.localStorage.setItem('zk_uid',u); }catch(e){} }
+    return u;
+  }
+  function globalSubmit(entry){
+    if(!GLOBAL.enabled) return;
+    try{
+      var uid=getUid();
+      var url=GLOBAL.url.replace(/\/+$/,'')+'/scores/'+uid+'.json';
+      var payload=JSON.stringify({name:entry.name,score:entry.score,badges:entry.badges,country:myCountry||'',ts:Date.now()});
+      // önce bu cihazın mevcut skorunu oku; yalnızca YENİ skor daha yüksekse üzerine yaz
+      fetch(url).then(function(r){return r.json();}).then(function(cur){
+        var prev=(cur&&typeof cur.score==='number')?cur.score:-1;
+        if(entry.score>prev){ fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload}).catch(function(){}); }
+      }).catch(function(){ fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload}).catch(function(){}); });
+    }catch(e){}
+  }
+  function globalAll(cb){
+    if(!GLOBAL.enabled){ cb(null); return; }
+    try{
+      fetch(GLOBAL.url.replace(/\/+$/,'')+'/scores.json').then(function(r){return r.json();}).then(function(data){
+        var arr=[]; if(data){ for(var k in data){ var it=data[k]; if(it&&typeof it.score==='number') arr.push(it); } }
+        cb(arr);
+      }).catch(function(){ cb(null); });
+    }catch(e){ cb(null); }
+  }
+  // skor tablosunu göster: küresel açıksa dünya (hata olursa yerele düşer), değilse bu cihaz
+  function showLB(el, hi, limit){
+    limit=limit||100;
+    if(GLOBAL.enabled){
+      el.innerHTML='<div class="how-item" style="justify-content:center;"><span class="tx">'+L().loading+'</span></div>';
+      globalAll(function(arr){
+        if(!arr){ var loc=getLB().slice(); if(hi) loc=loc.concat([hi]); renderWithRank(el, loc, hi, limit, false); return; }
+        if(hi) arr=arr.concat([hi]);
+        renderWithRank(el, arr, hi, limit, true);
+      });
+    } else {
+      var loc=getLB().slice(); if(hi) loc=loc.concat([hi]);
+      renderWithRank(el, loc, hi, limit, false);
+    }
+  }
+
+  /* ============================================================
+     H) OYUN DURUMU + DÖNGÜ
+     ============================================================ */
+  var score=0, best=0;
+  try{best=Number(Store.get('zincirkir_best')||0);}catch(e){best=0;}
+  var timeLeft=START_TIME;
+  var timeRate=1.0;           // zamanın akış hızı (skorla ve kaosla artar)
+  var frozen=false;           // gümüş rozet: zaman dondurma
+  var running=false, paused=false, counting=false;
+  var combo=0, comboMult=1, comboWindow=COMBO_WINDOW, comboWindowMax=COMBO_WINDOW;
+  var streak=0, x2Until=0, stormUntil=0, lastStormScore=0;
+  var reverse=false, avoidColor=null, plainRound=true;
+  var livesMode=false, lives=3;
+  var scoreMult=1;            // altın rozet %10 çarpan
+  var forgiveCount=0;         // elmas rozet: ilk hatayı affet
+  var earned={};              // kazanılan rozetler
+  var lastChaosM=1, lastTimeK=0;   // kaos barajı ve süre-ödülü barajı takibi
+  var gridSize=4, activeColors=colorOrder.slice(0,3), target=null;
+  var tiles=[];
+  var rafId=null, lastTs=null, freezeTimer=null;
+
+  function randColor(){return activeColors[Math.floor(Math.random()*activeColors.length)];}
+  function shuffleArr(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+  function buildGrid(n){
+    var g=$('grid'); var html='';
+    for(var i=0;i<n;i++){ html+='<button class="tile" data-tile="'+i+'"><span class="ic"></span></button>'; }
+    g.innerHTML=html;
+    tiles=Array.prototype.slice.call(g.querySelectorAll('.tile'));
+  }
+
+  /* ---- kutulara içerik dağıt: hedef + renkler (+ bomba >600, + zırh >900) ---- */
+  function placeTiles(){
+    var slots=[{type:'target', color:target}];
+    var others=activeColors.filter(function(c){return c!==target;}); shuffleArr(others);
+    var oi=0;
+    while(slots.length<tiles.length){ slots.push({type:'color', color: others.length?others[oi++%others.length]:randColor()}); }
+    function pickPlain(){ var idxs=[]; for(var i=1;i<slots.length;i++){ if(slots[i].type==='color') idxs.push(i);} return idxs.length?idxs[Math.floor(Math.random()*idxs.length)]:-1; }
+    // BOMBA (>600) — kaos modunda bazen SAYAÇLI (büyük) bomba
+    if(score>=BOMB_FROM && Math.random()<(score>=CHAOS_FROM?0.42:0.32) && slots.length>2){
+      var bi=pickPlain(); if(bi>0){ var big=(score>=CHAOS_FROM && Math.random()<0.5); slots[bi]={type: big?'bigbomb':'bomb'}; }
+    }
+    // ALTIN KUTU (>300) — bonus
+    if(score>=GOLD_FROM && Math.random()<0.12){ var gi=pickPlain(); if(gi>0) slots[gi]={type:'gold'}; }
+    // SAHTE HEDEF (>1200) — sadece normal turda (hedef kutusu gösterilirken)
+    if(plainRound && score>=FAKE_FROM && Math.random()<0.30){ var fi=pickPlain(); if(fi>0) slots[fi]={type:'fake'}; }
+    shuffleArr(slots);
+    var armorTarget = score>=ARMOR_FROM && Math.random()<(score>=CHAOS_FROM?0.42:0.30);
+    var doFade = score>=DISAPPEAR_FROM && Math.random()<0.25;   // kaybolan kutular
+    for(var n=0;n<tiles.length;n++){
+      var s=slots[n], el=tiles[n], ic=el.querySelector('.ic');
+      el.className='tile'; el.removeAttribute('data-color'); el.removeAttribute('data-bomb'); el.removeAttribute('data-hits'); el.removeAttribute('data-gold'); ic.textContent='';
+      if(s.type==='bomb'){ el.setAttribute('data-bomb','1'); el.classList.add('bomb'); ic.textContent='💣'; el.style.background=''; }
+      else if(s.type==='bigbomb'){ el.setAttribute('data-bomb','2'); el.classList.add('bomb','bigbomb'); ic.textContent='⏱️'; el.style.background=''; }
+      else if(s.type==='gold'){ el.setAttribute('data-gold','1'); el.classList.add('gold'); ic.textContent='⭐'; el.style.background=''; }
+      else if(s.type==='fake'){ el.setAttribute('data-color','__fake'); el.style.background=shadeShift(COLORS[target],26); }
+      else { el.setAttribute('data-color', s.color); el.style.background=COLORS[s.color];
+        if(s.type==='target' && armorTarget){ el.classList.add('armored'); el.setAttribute('data-hits','2'); ic.textContent='🛡️'; } }
+      if(doFade) el.classList.add('fade');
+    }
+  }
+
+  function nextChallenge(){
+    var d=L(); var sw=$('target-swatch'), word=$('target-word'), cap=$('target-caption');
+    reverse=false; avoidColor=null; plainRound=true;
+    var doReverse = score>=REVERSE_FROM && Math.random()<0.18 && activeColors.length>=3;
+    var doStroop = !doReverse && score>=STROOP_FROM && Math.random()<0.32 && activeColors.length>=2;
+    if(doReverse){
+      avoidColor=randColor(); target=avoidColor;
+      sw.style.display='block'; sw.style.background=COLORS[avoidColor]; sw.style.color=COLORS[avoidColor];
+      word.style.display='none'; cap.textContent=d.avoidThis; cap.classList.add('stroop');
+      reverse=true; plainRound=false;
+    } else if(doStroop){
+      var wordKey=randColor(), inkKey=randColor(), guard=0;
+      while(inkKey===wordKey && guard++<10) inkKey=randColor();
+      var mode = Math.random()<0.5 ? 'name' : 'ink';
+      target = (mode==='name') ? wordKey : inkKey;
+      word.textContent = d.cName[wordKey]||wordKey;
+      word.style.color = COLORS[inkKey];
+      word.style.display='block'; sw.style.display='none';
+      cap.textContent = (mode==='name') ? d.findNamed : d.findInk;
+      cap.classList.add('stroop'); plainRound=false;
+    } else {
+      target=randColor();
+      sw.style.display='block'; sw.style.background=COLORS[target]; sw.style.color=COLORS[target];
+      word.style.display='none'; cap.textContent=d.tapThis; cap.classList.remove('stroop');
+    }
+    placeTiles();
+  }
+
+  /* ---- efektler ---- */
+  function timeFloat(txt){var el=document.createElement('div');el.className='time-float';el.textContent=txt;$('screen-game').appendChild(el);setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},1200);}
+  function confetti(){
+    var wrap=$('confetti'); wrap.classList.add('on'); wrap.innerHTML='';
+    var cols=[COLORS.pink,COLORS.cyan,COLORS.yellow,COLORS.violet,COLORS.green];
+    for(var i=0;i<44;i++){var p=document.createElement('div');p.className='cf';p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%cols.length];p.style.animationDelay=(Math.random()*0.3)+'s';p.style.transform='rotate('+(Math.random()*360)+'deg)';wrap.appendChild(p);}
+    setTimeout(function(){wrap.classList.remove('on');wrap.innerHTML='';},1700);
+  }
+  function addTime(sec){ timeLeft+=sec; timeFloat(L().secBonus(sec)); }
+  function doFreeze(){
+    frozen=true; $('frost').classList.add('on'); $('time-fill').classList.add('frozen');
+    if(freezeTimer)clearTimeout(freezeTimer);
+    freezeTimer=setTimeout(function(){ frozen=false; $('frost').classList.remove('on'); $('time-fill').classList.remove('frozen'); }, 3000);
+  }
+
+  /* ---- ROZET: skor eşiği geçilince aç + gücünü uygula ---- */
+  function checkBadges(){
+    var d=L();
+    for(var i=0;i<BADGES.length;i++){
+      var b=BADGES[i];
+      if(score>=b.score && !earned[b.key]){
+        earned[b.key]=true;
+        if(b.key==='bronze'){ addTime(5); toast(d.tBronze,'badge'); }
+        else if(b.key==='silver'){ doFreeze(); toast(d.tSilver,'freeze'); }
+        else if(b.key==='gold'){ scoreMult+=0.10; addTime(15); toast(d.tGold,'badge'); }
+        else if(b.key==='diamond'){ comboWindowMax=COMBO_WINDOW*2; forgiveCount=1; addTime(10); toast(d.tDiamond,'badge'); }
+        confetti(); beep(950,0.25,'sawtooth'); vibrate(60); updateBadgeMini();
+      }
+    }
+  }
+  function updateBadgeMini(){var s='';for(var i=0;i<BADGES.length;i++){if(earned[BADGES[i].key])s+=BADGES[i].emoji;}$('badge-mini').textContent=s;}
+
+  /* ---- Zorluk: renk sayısı + ızgara boyutu ---- */
+  function checkDifficulty(){
+    var newColors=colorsForScore(score), newGrid=gridForScore(score);
+    if(newColors!==activeColors.length){ activeColors=colorOrder.slice(0,newColors); }
+    if(newGrid!==gridSize){ gridSize=newGrid; buildGrid(gridSize); toast(L().tGrid6,'badge'); confetti(); }
+    var g=$('grid'); if(g){ if(score>=ROTATE_FROM) g.classList.add('sway'); else g.classList.remove('sway'); }
+  }
+
+  /* ---- Zaman skorla SÜREKLI hızlanır; kaos eşiğinde ekstra sertleşir ---- */
+  function updateTimeRate(){
+    // Zaman skorla hızlanır AMA tavanı var → kazanılan süre hep yetişebilir (gerçekten sonsuz mümkün)
+    var r = 1 + Math.min(score/9000, 0.40);   // en fazla +%40 hızlanır
+    if(score>=CHAOS_FROM) r += 0.15;          // kaosta biraz daha (toplam ~1.55x tavan)
+    timeRate = r;
+  }
+  function checkChaos(){
+    updateTimeRate();
+    if(score>=CHAOS_FROM){
+      var m=Math.floor(score/1000);           // binlik barajlar
+      if(m>lastChaosM){
+        lastChaosM=m;
+        addTime(20); placeTiles();            // baraj ödülü +20 sn + shuffle
+        toast(L().tChaos,'chaos'); confetti(); beep(300,0.3,'sawtooth'); vibrate(80);
+      }
+    }
+  }
+
+  function comboMultFor(c){ return c>=15?4 : c>=10?3 : c>=5?2 : 1; }
+
+  // Her 500 puanda +10 sn — oyunun ilerledikçe devam edebilmesi için düzenli süre kaynağı
+  function checkTimeMilestone(){
+    var k=Math.floor(score/500);
+    while(k>lastTimeK){ lastTimeK++; addTime(12); }
+  }
+
+  /* ---- yeni oyun + 3-2-1 geri sayım ---- */
+  function startGame(){
+    livesMode = (Store.get('zk_mode')==='lives'); lives=3;
+    score=0; timeLeft=START_TIME; timeRate=1.0; frozen=false;
+    combo=0; comboMult=1; comboWindow=COMBO_WINDOW; comboWindowMax=COMBO_WINDOW;
+    scoreMult=1; forgiveCount=0; earned={}; lastChaosM=1; lastTimeK=0;
+    streak=0; x2Until=0; stormUntil=0; lastStormScore=0; reverse=false; avoidColor=null;
+    gridSize=4; activeColors=colorOrder.slice(0,colorsForScore(0));
+    running=false; paused=false; counting=true;
+    if(freezeTimer)clearTimeout(freezeTimer); $('frost').classList.remove('on'); $('time-fill').classList.remove('frozen'); app.classList.remove('stress','x2glow','storm');
+    var g0=$('grid'); if(g0)g0.classList.remove('sway');
+    if(livesMode){ timeLeft=999999; } else { var db=parseInt(Store.get('zk_dailyBonus')||'0',10); if(db>0){ timeLeft+=db; Store.set('zk_dailyBonus','0'); } }
+    $('score').textContent=0; $('best').textContent=best; $('chain-count').textContent=0; $('combo-mult').textContent='x1';
+    if(livesMode){ updateLivesUI(); } else { $('time-track').style.display=''; $('time-num').textContent=fmtTime(timeLeft); $('time-fill').style.transform='scaleX(1)'; }
+    updateBadgeMini(); buildGrid(gridSize); nextChallenge(); show('game');
+    var cd=$('countdown'), num=$('cd-num'); cd.classList.add('on'); num.classList.remove('go');
+    var seq=['3','2','1',L().go], idx=0; num.textContent=seq[0]; beep(400,0.12);
+    var stepFn=function(){
+      idx++;
+      if(idx<seq.length){ num.textContent=seq[idx]; if(seq[idx]===L().go){num.classList.add('go');beep(720,0.2,'triangle');}else beep(400,0.12); setTimeout(stepFn,700); }
+      else { cd.classList.remove('on'); counting=false; beginPlay(); }
+    };
+    setTimeout(stepFn,700);
+  }
+  function beginPlay(){ running=true; paused=false; lastTs=null; startMusic(); if(rafId)cancelAnimationFrame(rafId); rafId=requestAnimationFrame(tick); }
+
+  function fmtTime(t){ t=Math.max(0,Math.ceil(t)); var m=Math.floor(t/60), s=t%60; return m+':'+(s<10?'0'+s:s); }
+
+  /* ---- ANA DÖNGÜ ---- */
+  function tick(ts){
+    if(!running)return;
+    if(lastTs===null)lastTs=ts;
+    var dt=(ts-lastTs)/1000; lastTs=ts;
+    if(!livesMode && !frozen) timeLeft-=dt*timeRate;
+    comboWindow-=dt;
+    if(comboWindow<=0 && combo>0){ combo=0; comboMult=1; $('combo-mult').textContent='x1'; $('chain-count').textContent=0; }
+    if(!livesMode){
+      var tp=Math.max(0,Math.min(1,timeLeft/START_TIME));
+      $('time-fill').style.transform='scaleX('+tp+')'; $('time-num').textContent=fmtTime(timeLeft);
+      var low=timeLeft<=10 && !frozen;
+      $('time-num').classList.toggle('low',low); $('time-fill').classList.toggle('low',low);
+      if(low && !app.classList.contains('stress'))app.classList.add('stress'); else if(!low && app.classList.contains('stress'))app.classList.remove('stress');
+    }
+    $('combo-fill').style.transform='scaleX('+Math.max(0,comboWindow/comboWindowMax)+')';
+    if(x2Until && Date.now()>=x2Until) app.classList.remove('x2glow');
+    if(stormUntil && Date.now()>=stormUntil) app.classList.remove('storm');
+    if(!livesMode && timeLeft<=0){ gameOver(); return; }
+    rafId=requestAnimationFrame(tick);
+  }
+
+  /* ---- dokunma: bomba / zırh / doğru / yanlış ---- */
+  function onTileTap(tile){
+    if(!running||paused||counting)return;
+    if(tile.getAttribute('data-gold')){ goldenHit(tile); return; }
+    var _bomb=tile.getAttribute('data-bomb'); if(_bomb){ penalty(_bomb==='2'?BIGBOMB_PENALTY:BOMB_PENALTY, tile); return; }
+    if(reverse){
+      if(tile.getAttribute('data-color')===avoidColor){ penalty(WRONG_PENALTY, tile); }
+      else { correctHit(tile); }
+      return;
+    }
+    var isTarget=(tile.getAttribute('data-color')===target);
+    if(isTarget){
+      var hits=parseInt(tile.getAttribute('data-hits')||'1',10);
+      if(hits>1){ tile.setAttribute('data-hits', String(hits-1)); tile.classList.add('cracked'); var ic=tile.querySelector('.ic'); if(ic)ic.textContent='💥'; beep(300,0.06,'square'); vibrate(20); return; }
+      correctHit(tile);
+    } else { penalty(WRONG_PENALTY, tile); }
+  }
+  function correctHit(tile){
+    tile.classList.add('correct-flash');setTimeout(function(){tile.classList.remove('correct-flash');},110);
+    combo+=1; comboMult=comboMultFor(combo); comboWindow=comboWindowMax; streak+=1;
+    beep(520+Math.min(combo,20)*16,0.06,'triangle');
+    var pts=Math.round(BASE*comboMult*scoreMult*effMult()); score+=pts;
+    $('score').textContent=score; $('chain-count').textContent=combo; $('combo-mult').textContent='x'+comboMult;
+    // kombo kilometre taşı: büyük yazı + sarsıntı
+    if(combo===5||combo===10||combo===15||combo===20||(combo>20&&combo%10===0)){ comboFlash('KOMBO x'+comboMult+'!'); screenShake(); beep(760,0.12,'sawtooth'); }
+    // seri (streak) bonusu: 10 doğru üst üste → birkaç sn x2
+    if(streak>0 && streak%STREAK_FOR_BONUS===0){ x2Until=Date.now()+STREAK_BONUS_DUR*1000; app.classList.add('x2glow'); toast('🔥 x2 BONUS! ('+STREAK_BONUS_DUR+' sn)','badge'); confetti(); }
+    checkBadges(); checkDifficulty(); checkChaos(); checkTimeMilestone(); checkStorm();
+    nextChallenge();
+  }
+  function penalty(sec, tile){
+    streak=0; x2Until=0; app.classList.remove('x2glow');
+    if(forgiveCount>0){ forgiveCount--; toast(L().tForgive,'freeze'); beep(700,0.12,'triangle'); comboWindow=comboWindowMax; nextChallenge(); return; } // elmas affı
+    if(tile){ tile.classList.add('wrong'); setTimeout(function(){tile.classList.remove('wrong');},320); }
+    combo=0; comboMult=1; comboWindow=comboWindowMax; $('combo-mult').textContent='x1'; $('chain-count').textContent=0;
+    var rf=$('red-flash'); rf.classList.remove('show'); void rf.offsetWidth; rf.classList.add('show');
+    beep(160,0.22,'square'); vibrate(120);
+    if(livesMode){ lives-=1; updateLivesUI(); if(lives<=0){ gameOver(); return; } }
+    else { timeLeft-=sec; if(timeLeft<=0){ gameOver(); return; } }
+    nextChallenge();
+  }
+
+  var pendingEntry=null;
+  function earnedList(){var a=[];for(var i=0;i<BADGES.length;i++){if(earned[BADGES[i].key])a.push(BADGES[i].key);}return a;}
+  function gameOver(){
+    running=false; paused=false; counting=false;
+    if(rafId)cancelAnimationFrame(rafId); stopMusic();
+    if(freezeTimer)clearTimeout(freezeTimer); $('frost').classList.remove('on'); app.classList.remove('stress','x2glow','storm');
+    var g1=$('grid'); if(g1)g1.classList.remove('sway');
+    var d=L(); var isNew=score>best;
+    if(isNew){best=score;Store.set('zincirkir_best',String(best));$('best').textContent=best;$('start-best').textContent=best;}
+    $('over-title').textContent = isNew ? d.newBest : (livesMode ? d.livesUp : d.timeUp); $('over-title').classList.toggle('best',isNew);
+    $('over-score').textContent=score;
+    var ob=$('over-badges'); var bs=''; for(var i=0;i<BADGES.length;i++){if(earned[BADGES[i].key])bs+='<span>'+BADGES[i].emoji+'</span>';}
+    ob.innerHTML=bs||'<span class="none">—</span>';
+    pendingEntry={name:(Store.get('zk_name')||d.defaultName), score:score, badges:earnedList(), date:new Date().toLocaleDateString(settings.lang==='tr'?'tr-TR':'en-US')};
+    showLB($('over-lb'), pendingEntry, 8);
+    beep(isNew?1000:180,0.3,'sawtooth'); if(isNew) confetti();
+    show('over');
+    maybeInterstitial();
+  }
+  function commitScore(){
+    if(!pendingEntry)return;
+    // isim girişte alındı ve sabit — burada tekrar sorulmaz
+    var lb=getLB();
+    // aynı isimden mevcut kaydı bul; sadece daha yüksekse güncelle (tek satır kalsın)
+    var idx=-1; for(var i=0;i<lb.length;i++){ if(String(lb[i].name)===String(pendingEntry.name)){ idx=i; break; } }
+    if(idx>=0){ if(pendingEntry.score>lb[idx].score) lb[idx]=pendingEntry; }
+    else lb.push(pendingEntry);
+    lb.sort(function(a,b){return b.score-a.score;}); lb=lb.slice(0,100); saveLB(lb);
+    globalSubmit(pendingEntry);
+    pendingEntry=null;
+  }
+
+  /* ===== I) TIKLAMA YÖNETİMİ ===== */
+  function handleAction(act){
+    switch(act){
+      case 'start': startGame(); break;
+      case 'confirm-name': { var v=$('firstname-input').value.trim(); if(!v){ miniToastShow(L().nameEmpty); break; } if(isBadName(v)){ miniToastShow(L().nameBad); break; } Store.set('zk_name', v); show('start'); break; }
+      case 'go-shop': renderShop(); show('shop'); break;
+      case 'buy-noads': buyRemoveAds(); break;
+      case 'go-start': running=false; counting=false; stopMusic(); if(freezeTimer)clearTimeout(freezeTimer); $('frost').classList.remove('on'); app.classList.remove('stress'); show('start'); break;
+      case 'go-how': renderHow(); show('how'); break;
+      case 'go-lb': show('lb'); showLB($('lb-list'), null, 100); break;
+      case 'go-settings': syncSettingsUI(); show('settings'); break;
+      case 'save-retry': commitScore(); startGame(); break;
+      case 'save-menu': commitScore(); show('start'); break;
+      case 'resume': if(!paused)break; paused=false; running=true; lastTs=null; show('game'); startMusic(); rafId=requestAnimationFrame(tick); break;
+      case 'restart-game': startGame(); break;
+      case 'pause': if(!running||counting)break; paused=true; running=false; if(rafId)cancelAnimationFrame(rafId); stopMusic(); show('pause'); break;
+      case 'pause-menu': paused=false; running=false; stopMusic(); if(freezeTimer)clearTimeout(freezeTimer); $('frost').classList.remove('on'); app.classList.remove('stress'); show('start'); break;
+    }
+  }
+  function onGlobalClick(e){
+    var t=e.target;
+    var actEl=t.closest?t.closest('[data-act]'):null; if(actEl){handleAction(actEl.getAttribute('data-act'));return;}
+    var tileEl=t.closest?t.closest('[data-tile]'):null; if(tileEl){onTileTap(tileEl);return;}
+    var langEl=t.closest?t.closest('[data-lang]'):null; if(langEl){setLang(langEl.getAttribute('data-lang'));return;}
+    var themeEl=t.closest?t.closest('[data-theme]'):null; if(themeEl){ var mn=parseInt(themeEl.getAttribute('data-min')||'0',10); if(mn>0 && best<mn){ miniToastShow(L().themeLocked.replace('{n}',mn)); return; } settings.theme=themeEl.getAttribute('data-theme');saveSettings();applyTheme(settings.theme);syncSettingsUI();beep(520,0.1);return;}
+    var modeEl=t.closest?t.closest('[data-mode]'):null; if(modeEl){ Store.set('zk_mode', modeEl.getAttribute('data-mode')); syncSettingsUI(); beep(520,0.1); return; }
+  }
+  var suppressNextClick=false;
+  document.addEventListener('pointerdown',function(e){suppressNextClick=true;onGlobalClick(e);},true);
+  document.addEventListener('click',function(e){if(suppressNextClick){suppressNextClick=false;return;} if(e.target&&e.target.id==='firstname-input')return; onGlobalClick(e);},true);
+
+  $('set-sound').addEventListener('change',function(e){settings.sound=e.target.checked;saveSettings();if(settings.sound)beep(660,0.1);});
+  $('set-vibrate').addEventListener('change',function(e){settings.vibrate=e.target.checked;saveSettings();if(settings.vibrate)vibrate(30);});
+
+  /* ===== J) BAŞLATMA ===== */
+  applyTheme(settings.theme); applyLang(); syncSettingsUI(); detectCountry();
+  if(checkDaily()){ setTimeout(function(){ try{miniToastShow(L().dailyReward);}catch(e){} }, 3300); }
+  $('start-best').textContent=best; $('best').textContent=best;
+  // İlk açılışta isim sor, sonra hep onu kullan; her açılışta CHAIN BREAK splash göster
+  function decideEntry(){ if(Store.get('zk_name')) show('start'); else show('name'); }
+  applyNoAds(); initAds();
+  var splashEl=$('splash');
+  setTimeout(function(){ splashEl.classList.add('fade'); setTimeout(function(){ splashEl.style.display='none'; decideEntry(); }, 500); }, 2200);
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  // Eski service worker'ları kaldır (bayat önbellek / '<' hatası sorununu giderir)
+  navigator.serviceWorker.getRegistrations().then(function(rs){for(var i=0;i<rs.length;i++){rs[i].unregister();}}).catch(function(){});
+}
+if(window.caches && caches.keys){ caches.keys().then(function(ks){for(var i=0;i<ks.length;i++){caches.delete(ks[i]);}}).catch(function(){}); }
+</script>
+</body>
+</html>
